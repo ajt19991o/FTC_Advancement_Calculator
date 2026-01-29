@@ -10,7 +10,7 @@
         
         body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
         
-        /* Theme Definitions*/
+        /* Theme Definitions */
         .theme-scout { --primary: #6366f1; --primary-hover: #4f46e5; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --accent: #818cf8; }
         .theme-decode { --primary: #fbbf24; --primary-hover: #f59e0b; --bg: #111827; --card: #1f2937; --text: #f3f4f6; --accent: #fbbf24; }
         .theme-midnight { --primary: #0ea5e9; --primary-hover: #0284c7; --bg: #030712; --card: #111827; --text: #f8fafc; --accent: #38bdf8; }
@@ -248,13 +248,15 @@
             status.innerHTML = "";
             status.className = "text-[10px] text-center font-bold mt-1 text-slate-400";
 
-            // Cleaned GraphQL Query
+            // Revised Query: Using 'stats' field for rank as indicated by previous errors
             const query = `
                 query TeamLatestEvent($teamNumber: Int!) {
                     teamByNumber(number: $teamNumber) {
                         number
                         events(season: 2025) {
-                            rank
+                            stats {
+                                rank
+                            }
                             event {
                                 code
                                 name
@@ -285,7 +287,8 @@
                 const teamData = result?.data?.teamByNumber;
                 if (!teamData) throw new Error("Team not found.");
                 
-                const validEvents = (teamData.events || []).filter(e => e.rank > 0);
+                // Filter for events that have valid rank data in 'stats'
+                const validEvents = (teamData.events || []).filter(e => e.stats && e.stats.rank > 0);
                 if (validEvents.length === 0) throw new Error("No recorded rankings found for this season.");
 
                 // Use the most recent event
@@ -297,7 +300,7 @@
 
                 document.getElementById('totalTeams').value = latestEvent.teams.length;
                 document.getElementById('numAlliances').value = latestEvent.teams.length >= 40 ? "8" : "4";
-                document.getElementById('rank').value = latestEntry.rank;
+                document.getElementById('rank').value = latestEntry.stats.rank;
 
                 // Award mapping
                 const teamAwards = (latestEvent.awards || []).filter(a => 
