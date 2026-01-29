@@ -40,6 +40,8 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        #debugLog { display: none; margin-top: 2rem; padding: 1rem; background: #000; color: #0f0; border-radius: 8px; font-size: 10px; overflow-x: auto; }
     </style>
 </head>
 <body class="p-4 md:p-8 theme-scout" id="mainBody">
@@ -72,6 +74,7 @@
                             Sync via FTC Scout
                         </button>
                         <div id="syncStatus" class="text-[10px] text-center font-bold mt-1"></div>
+                        <button onclick="toggleDebug()" class="w-full text-[9px] uppercase opacity-40 hover:opacity-100 text-center mt-2">Toggle Debug Log</button>
                     </div>
                 </div>
 
@@ -210,6 +213,8 @@
                 </div>
             </div>
         </div>
+        
+        <pre id="debugLog"></pre>
     </div>
 
     <script>
@@ -220,11 +225,17 @@
             brand.innerText = theme === 'decode' ? 'DECODE' : (theme === 'midnight' ? 'CORE' : 'FTC SCOUT');
             localStorage.setItem('ftcTheme', theme);
         }
+        
+        function toggleDebug() {
+            const log = document.getElementById('debugLog');
+            log.style.display = log.style.display === 'block' ? 'none' : 'block';
+        }
 
         async function fetchScoutData() {
             const teamNumberInput = document.getElementById('scoutTeam').value;
             const btn = document.getElementById('fetchBtn');
             const status = document.getElementById('syncStatus');
+            const debug = document.getElementById('debugLog');
 
             if (!teamNumberInput) {
                 alert("Please enter a Team Number.");
@@ -238,11 +249,14 @@
             status.className = "text-[10px] text-center font-bold mt-1 text-slate-400";
 
             // Query team events with stats (rank) and awards from FTC Scout API
+            // Revised Query: Use fields compatible with current FTC Scout GraphQL schema
+            // Removed 'quals' wrapper for rank, changed 'recipientTeams' to 'team'
             const query = `
                 query TeamLatestEvent($teamNumber: Int!) {
                     teamByNumber(number: $teamNumber) {
                         number
                         events(season: 2025) {
+                            rank
                             event {
                                 code
                                 name
@@ -256,6 +270,10 @@
                             stats {
                                 ... on TeamEventStats2025 {
                                     rank
+                                awards { 
+                                    type 
+                                    placement 
+                                    team { teamNumber }
                                 }
                             }
                         }
@@ -271,6 +289,8 @@
                 });
 
                 const result = await response.json();
+                debug.innerText = JSON.stringify(result, null, 2);
+
                 if (result.errors) throw new Error("API Error: " + result.errors[0].message);
 
                 const teamData = result?.data?.teamByNumber;
@@ -282,6 +302,15 @@
                 const latestEvent = latestEventData.event;
                 const rank = latestEventData.stats?.rank;
 
+                
+                // Filter for events that have valid rank data
+                const validEvents = (teamData.events || []).filter(e => e.rank > 0);
+                if (validEvents.length === 0) throw new Error("No 2025 events with recorded rankings found.");
+
+                // Use the most recent event
+                const latestEntry = validEvents[validEvents.length - 1];
+                const latestEvent = latestEntry.event;
+                
                 status.innerHTML = "Synced: " + latestEvent.name;
                 status.classList.add("text-[var(--primary)]");
 
@@ -298,6 +327,27 @@
                     } else if (['think','connect','reach','sustain','design','innovate','control'].includes(type)) {
                         document.getElementById('judgedAward').value = (place === 1) ? 12 : (place === 2 ? 6 : 3);
                     }
+                document.getElementById('rank').value = latestEntry.rank;
+
+                // Process awards correctly based on new 'team' field structure
+                const teamAwards = (latestEvent.awards || []).filter(a => 
+                    a.team && a.team.teamNumber === teamNumber
+                );
+
+                if (teamAwards.length > 0) {
+                    let bestScore = 0;
+                    teamAwards.forEach(a => {
+                        const type = a.type.toLowerCase();
+                        const place = a.placement;
+                        let score = 0;
+                        if (type === 'inspire') {
+                            score = (place === 1) ? 60 : (place === 2 ? 30 : 15);
+                        } else if (['think','connect','reach','sustain','design','innovate','control'].includes(type)) {
+                            score = (place === 1) ? 12 : (place === 2 ? 6 : 3);
+                        }
+                        if (score > bestScore) bestScore = score;
+                    });
+                    document.getElementById('judgedAward').value = bestScore;
                 } else {
                     document.getElementById('judgedAward').value = "0";
                 }
