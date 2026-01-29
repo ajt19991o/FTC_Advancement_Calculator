@@ -237,12 +237,13 @@
             status.innerHTML = "";
             status.className = "text-[10px] text-center font-bold mt-1 text-slate-400";
 
-            // Restructured query: Rankings are directly on the Team object in FTC Scout
+            // Updated query: rank is usually available on the relationship (TeamEvent object)
+            // Awards and teams count are fetched via the nested event object.
             const query = `
                 query TeamLatestEvent($teamNumber: Int!) {
                     teamByNumber(number: $teamNumber) {
                         number
-                        rankings(season: 2025) {
+                        events(season: 2025) {
                             rank
                             event {
                                 code
@@ -271,28 +272,43 @@
 
                 const teamData = result?.data?.teamByNumber;
                 if (!teamData) throw new Error("Team not found.");
-                if (!teamData.rankings || teamData.rankings.length === 0) throw new Error("No 2025 event rankings found for this team.");
+                
+                // Filter for events that have a valid rank recorded
+                const validEvents = (teamData.events || []).filter(e => e.rank > 0);
+                if (validEvents.length === 0) throw new Error("No 2025 events with recorded rankings found.");
 
-                // Take the most recent ranking/event
-                const latestRanking = teamData.rankings[teamData.rankings.length - 1];
-                const latestEvent = latestRanking.event;
+                // Use the most recent event
+                const latestEntry = validEvents[validEvents.length - 1];
+                const latestEvent = latestEntry.event;
                 
                 status.innerHTML = "Synced: " + latestEvent.name;
                 status.classList.add("text-[var(--primary)]");
 
                 document.getElementById('totalTeams').value = latestEvent.teams.length;
                 document.getElementById('numAlliances').value = latestEvent.teams.length >= 40 ? "8" : "4";
-                document.getElementById('rank').value = latestRanking.rank;
+                document.getElementById('rank').value = latestEntry.rank;
 
-                const myAward = latestEvent.awards.find(a => a.recipientTeams.some(t => t.teamNumber === teamNumber));
-                if (myAward) {
-                    const type = myAward.type.toLowerCase();
-                    const place = myAward.placement;
-                    if (type === 'inspire') {
-                        document.getElementById('judgedAward').value = (place === 1) ? 60 : (place === 2 ? 30 : 15);
-                    } else if (['think','connect','reach','sustain','design','innovate','control'].includes(type)) {
-                        document.getElementById('judgedAward').value = (place === 1) ? 12 : (place === 2 ? 6 : 3);
-                    }
+                // Look for the highest award won by this team at this event
+                const teamAwards = latestEvent.awards.filter(a => 
+                    a.recipientTeams.some(t => t.teamNumber === teamNumber)
+                );
+
+                if (teamAwards.length > 0) {
+                    // Sort to find best award (Inspire 1st > Inspire 2nd > Award 1st, etc)
+                    // We prioritize based on points value
+                    let bestScore = 0;
+                    teamAwards.forEach(a => {
+                        const type = a.type.toLowerCase();
+                        const place = a.placement;
+                        let score = 0;
+                        if (type === 'inspire') {
+                            score = (place === 1) ? 60 : (place === 2 ? 30 : 15);
+                        } else if (['think','connect','reach','sustain','design','innovate','control'].includes(type)) {
+                            score = (place === 1) ? 12 : (place === 2 ? 6 : 3);
+                        }
+                        if (score > bestScore) bestScore = score;
+                    });
+                    document.getElementById('judgedAward').value = bestScore;
                 } else {
                     document.getElementById('judgedAward').value = "0";
                 }
