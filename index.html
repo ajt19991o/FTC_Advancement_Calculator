@@ -40,6 +40,8 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        #debugLog { display: none; margin-top: 2rem; padding: 1rem; background: #000; color: #0f0; border-radius: 8px; font-size: 10px; overflow-x: auto; }
     </style>
 </head>
 <body class="p-4 md:p-8 theme-scout" id="mainBody">
@@ -72,6 +74,7 @@
                             Sync via FTC Scout
                         </button>
                         <div id="syncStatus" class="text-[10px] text-center font-bold mt-1"></div>
+                        <button onclick="toggleDebug()" class="w-full text-[9px] uppercase opacity-40 hover:opacity-100 text-center mt-2">Toggle Debug Log</button>
                     </div>
                 </div>
 
@@ -210,6 +213,8 @@
                 </div>
             </div>
         </div>
+        
+        <pre id="debugLog"></pre>
     </div>
 
     <script>
@@ -220,11 +225,17 @@
             brand.innerText = theme === 'decode' ? 'DECODE' : (theme === 'midnight' ? 'CORE' : 'FTC SCOUT');
             localStorage.setItem('ftcTheme', theme);
         }
+        
+        function toggleDebug() {
+            const log = document.getElementById('debugLog');
+            log.style.display = log.style.display === 'block' ? 'none' : 'block';
+        }
 
         async function fetchScoutData() {
             const teamNumberInput = document.getElementById('scoutTeam').value;
             const btn = document.getElementById('fetchBtn');
             const status = document.getElementById('syncStatus');
+            const debug = document.getElementById('debugLog');
 
             if (!teamNumberInput) {
                 alert("Please enter a Team Number.");
@@ -237,14 +248,16 @@
             status.innerHTML = "";
             status.className = "text-[10px] text-center font-bold mt-1 text-slate-400";
 
-            // Updated query: rank is usually available on the relationship (TeamEvent object)
-            // Awards and teams count are fetched via the nested event object.
+            // FTC Scout API Query Adjustment: 
+            // In FTC Scout GraphQL, 'quals' is the object containing 'rank'
             const query = `
                 query TeamLatestEvent($teamNumber: Int!) {
                     teamByNumber(number: $teamNumber) {
                         number
                         events(season: 2025) {
-                            rank
+                            quals {
+                                rank
+                            }
                             event {
                                 code
                                 name
@@ -268,13 +281,15 @@
                 });
 
                 const result = await response.json();
+                debug.innerText = JSON.stringify(result, null, 2);
+
                 if (result.errors) throw new Error("API Error: " + result.errors[0].message);
 
                 const teamData = result?.data?.teamByNumber;
                 if (!teamData) throw new Error("Team not found.");
                 
-                // Filter for events that have a valid rank recorded
-                const validEvents = (teamData.events || []).filter(e => e.rank > 0);
+                // Filter for events that have valid qualification data
+                const validEvents = (teamData.events || []).filter(e => e.quals && e.quals.rank > 0);
                 if (validEvents.length === 0) throw new Error("No 2025 events with recorded rankings found.");
 
                 // Use the most recent event
@@ -286,16 +301,13 @@
 
                 document.getElementById('totalTeams').value = latestEvent.teams.length;
                 document.getElementById('numAlliances').value = latestEvent.teams.length >= 40 ? "8" : "4";
-                document.getElementById('rank').value = latestEntry.rank;
+                document.getElementById('rank').value = latestEntry.quals.rank;
 
-                // Look for the highest award won by this team at this event
                 const teamAwards = latestEvent.awards.filter(a => 
                     a.recipientTeams.some(t => t.teamNumber === teamNumber)
                 );
 
                 if (teamAwards.length > 0) {
-                    // Sort to find best award (Inspire 1st > Inspire 2nd > Award 1st, etc)
-                    // We prioritize based on points value
                     let bestScore = 0;
                     teamAwards.forEach(a => {
                         const type = a.type.toLowerCase();
