@@ -248,9 +248,7 @@
             status.innerHTML = "";
             status.className = "text-[10px] text-center font-bold mt-1 text-slate-400";
 
-            // Query team events with stats (rank) and awards from FTC Scout API
-            // Revised Query: Use fields compatible with current FTC Scout GraphQL schema
-            // Removed 'quals' wrapper for rank, changed 'recipientTeams' to 'team'
+            // Cleaned GraphQL Query
             const query = `
                 query TeamLatestEvent($teamNumber: Int!) {
                     teamByNumber(number: $teamNumber) {
@@ -261,15 +259,6 @@
                                 code
                                 name
                                 teams { teamNumber }
-                                awards {
-                                    type
-                                    placement
-                                    teamNumber
-                                }
-                            }
-                            stats {
-                                ... on TeamEventStats2025 {
-                                    rank
                                 awards { 
                                     type 
                                     placement 
@@ -295,17 +284,9 @@
 
                 const teamData = result?.data?.teamByNumber;
                 if (!teamData) throw new Error("Team not found.");
-                if (!teamData.events || teamData.events.length === 0) throw new Error("No 2025 events found for this team.");
-
-                // Take the most recent event with stats
-                const latestEventData = teamData.events[teamData.events.length - 1];
-                const latestEvent = latestEventData.event;
-                const rank = latestEventData.stats?.rank;
-
                 
-                // Filter for events that have valid rank data
                 const validEvents = (teamData.events || []).filter(e => e.rank > 0);
-                if (validEvents.length === 0) throw new Error("No 2025 events with recorded rankings found.");
+                if (validEvents.length === 0) throw new Error("No recorded rankings found for this season.");
 
                 // Use the most recent event
                 const latestEntry = validEvents[validEvents.length - 1];
@@ -316,20 +297,9 @@
 
                 document.getElementById('totalTeams').value = latestEvent.teams.length;
                 document.getElementById('numAlliances').value = latestEvent.teams.length >= 40 ? "8" : "4";
-                if (rank) document.getElementById('rank').value = rank;
-
-                const myAward = latestEvent.awards.find(a => a.teamNumber === teamNumber);
-                if (myAward) {
-                    const type = myAward.type.toLowerCase();
-                    const place = myAward.placement;
-                    if (type === 'inspire') {
-                        document.getElementById('judgedAward').value = (place === 1) ? 60 : (place === 2 ? 30 : 15);
-                    } else if (['think','connect','reach','sustain','design','innovate','control'].includes(type)) {
-                        document.getElementById('judgedAward').value = (place === 1) ? 12 : (place === 2 ? 6 : 3);
-                    }
                 document.getElementById('rank').value = latestEntry.rank;
 
-                // Process awards correctly based on new 'team' field structure
+                // Award mapping
                 const teamAwards = (latestEvent.awards || []).filter(a => 
                     a.team && a.team.teamNumber === teamNumber
                 );
