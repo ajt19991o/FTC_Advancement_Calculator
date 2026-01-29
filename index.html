@@ -237,21 +237,25 @@
             status.innerHTML = "";
             status.className = "text-[10px] text-center font-bold mt-1 text-slate-400";
 
-            // Restructured query: Rankings are directly on the Team object in FTC Scout
+            // Query team events with stats (rank) and awards from FTC Scout API
             const query = `
                 query TeamLatestEvent($teamNumber: Int!) {
                     teamByNumber(number: $teamNumber) {
                         number
-                        rankings(season: 2025) {
-                            rank
+                        events(season: 2025) {
                             event {
                                 code
                                 name
                                 teams { teamNumber }
-                                awards { 
-                                    type 
-                                    placement 
-                                    recipientTeams { teamNumber }
+                                awards {
+                                    type
+                                    placement
+                                    teamNumber
+                                }
+                            }
+                            stats {
+                                ... on TeamEventStats2025 {
+                                    rank
                                 }
                             }
                         }
@@ -271,20 +275,21 @@
 
                 const teamData = result?.data?.teamByNumber;
                 if (!teamData) throw new Error("Team not found.");
-                if (!teamData.rankings || teamData.rankings.length === 0) throw new Error("No 2025 event rankings found for this team.");
+                if (!teamData.events || teamData.events.length === 0) throw new Error("No 2025 events found for this team.");
 
-                // Take the most recent ranking/event
-                const latestRanking = teamData.rankings[teamData.rankings.length - 1];
-                const latestEvent = latestRanking.event;
-                
+                // Take the most recent event with stats
+                const latestEventData = teamData.events[teamData.events.length - 1];
+                const latestEvent = latestEventData.event;
+                const rank = latestEventData.stats?.rank;
+
                 status.innerHTML = "Synced: " + latestEvent.name;
                 status.classList.add("text-[var(--primary)]");
 
                 document.getElementById('totalTeams').value = latestEvent.teams.length;
                 document.getElementById('numAlliances').value = latestEvent.teams.length >= 40 ? "8" : "4";
-                document.getElementById('rank').value = latestRanking.rank;
+                if (rank) document.getElementById('rank').value = rank;
 
-                const myAward = latestEvent.awards.find(a => a.recipientTeams.some(t => t.teamNumber === teamNumber));
+                const myAward = latestEvent.awards.find(a => a.teamNumber === teamNumber);
                 if (myAward) {
                     const type = myAward.type.toLowerCase();
                     const place = myAward.placement;
