@@ -237,17 +237,17 @@
             status.innerHTML = "";
             status.className = "text-[10px] text-center font-bold mt-1 text-slate-400";
 
-            // GraphQL query fixed: FTC Scout uses 'teamByNumber' field
+            // Restructured query: Rankings are directly on the Team object in FTC Scout
             const query = `
                 query TeamLatestEvent($teamNumber: Int!) {
                     teamByNumber(number: $teamNumber) {
                         number
-                        events(season: 2025) {
+                        rankings(season: 2025) {
+                            rank
                             event {
                                 code
                                 name
                                 teams { teamNumber }
-                                rankings { teamNumber rank }
                                 awards { 
                                     type 
                                     placement 
@@ -271,20 +271,18 @@
 
                 const teamData = result?.data?.teamByNumber;
                 if (!teamData) throw new Error("Team not found.");
-                if (!teamData.events || teamData.events.length === 0) throw new Error("No 2025 events found.");
+                if (!teamData.rankings || teamData.rankings.length === 0) throw new Error("No 2025 event rankings found for this team.");
 
-                const eventsWithData = teamData.events.filter(e => e.event.rankings && e.event.rankings.length > 0);
-                if (eventsWithData.length === 0) throw new Error("No published event data yet.");
-
-                const latestEvent = eventsWithData[eventsWithData.length - 1].event;
+                // Take the most recent ranking/event
+                const latestRanking = teamData.rankings[teamData.rankings.length - 1];
+                const latestEvent = latestRanking.event;
+                
                 status.innerHTML = "Synced: " + latestEvent.name;
                 status.classList.add("text-[var(--primary)]");
 
                 document.getElementById('totalTeams').value = latestEvent.teams.length;
                 document.getElementById('numAlliances').value = latestEvent.teams.length >= 40 ? "8" : "4";
-
-                const myRank = latestEvent.rankings.find(r => r.teamNumber === teamNumber)?.rank;
-                if (myRank) document.getElementById('rank').value = myRank;
+                document.getElementById('rank').value = latestRanking.rank;
 
                 const myAward = latestEvent.awards.find(a => a.recipientTeams.some(t => t.teamNumber === teamNumber));
                 if (myAward) {
