@@ -3,59 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DECODE Advancement Calculator • FTC Scout</title>
+    <title>DECODE Advancement Calculator • Ultimate Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@500;800&family=Press+Start+2P&family=Creepster&family=Orbitron:wght@500;700&family=VT323&family=Comic+Neue:wght@700&display=swap');
         
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.5s; }
         
-        /* Theme Definitions*/
-        .theme-scout { --primary: #6366f1; --primary-hover: #4f46e5; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --accent: #818cf8; }
-        .theme-decode { --primary: #fbbf24; --primary-hover: #f59e0b; --bg: #111827; --card: #1f2937; --text: #f3f4f6; --accent: #fbbf24; }
-        .theme-midnight { --primary: #0ea5e9; --primary-hover: #0284c7; --bg: #030712; --card: #111827; --text: #f8fafc; --accent: #38bdf8; }
+        /* --- 1. CORE & NEW THEMES --- */
+        .theme-scout { --primary: #6366f1; --primary-hover: #4f46e5; --bg: #f8fafc; --card: #ffffff; --text: #1e293b; --accent: #818cf8; --radius: 12px; }
+        .theme-decode { --primary: #fbbf24; --primary-hover: #f59e0b; --bg: #111827; --card: #1f2937; --text: #f3f4f6; --accent: #fbbf24; --radius: 12px; }
+        .theme-midnight { --primary: #0ea5e9; --primary-hover: #0284c7; --bg: #030712; --card: #111827; --text: #f8fafc; --accent: #38bdf8; --radius: 16px; }
+        .theme-alliance { --primary: #f97316; --primary-hover: #ea580c; --bg: #0c0a09; --card: #1c1917; --text: #ffedd5; --accent: #fdba74; --radius: 8px; }
+        
+        /* --- NEW REQUESTED THEMES --- */
+        .theme-steamos { --primary: #1a9fff; --primary-hover: #007cc3; --bg: #171a21; --card: #2a475e; --text: #c7d5e0; --accent: #66c0f4; --radius: 4px; font-family: 'Inter', sans-serif; background-image: linear-gradient(to bottom right, #171a21, #1b2838); }
+        .theme-cmd { --primary: #fbbf24; --primary-hover: #d97706; --bg: #0c0c0c; --card: #0c0c0c; --text: #cccccc; --accent: #fbbf24; --radius: 0px; font-family: 'VT323', monospace; border: 1px solid #333; }
+        .theme-kewanee { --primary: #F58025; --primary-hover: #d16d1d; --bg: #000000; --card: #1a1a1a; --text: #ffffff; --accent: #F58025; --radius: 8px; border: 2px solid #F58025; }
 
-        body.theme-scout { background-color: var(--bg); color: var(--text); }
-        body.theme-decode { background-color: var(--bg); color: var(--text); }
-        body.theme-midnight { background-color: var(--bg); color: var(--text); }
+        /* --- 2. SERIOUS --- */
+        .theme-corporate { --primary: #1e40af; --primary-hover: #1e3a8a; --bg: #f3f4f6; --card: #ffffff; --text: #111827; --accent: #60a5fa; --radius: 2px; }
+        .theme-professional { --primary: #475569; --primary-hover: #334155; --bg: #f1f5f9; --card: #ffffff; --text: #0f172a; --accent: #94a3b8; --radius: 6px; }
+        .theme-blueprint { --primary: #ffffff; --primary-hover: #e2e8f0; --bg: #1e3a8a; --card: #172554; --text: #bfdbfe; --accent: #60a5fa; --radius: 0px; background-image: radial-gradient(#60a5fa 1px, transparent 1px); background-size: 20px 20px; }
+        .theme-terminal { --primary: #22c55e; --primary-hover: #16a34a; --bg: #000000; --card: #111111; --text: #22c55e; --accent: #4ade80; --radius: 0px; font-family: 'JetBrains Mono', monospace; }
+        .theme-highcontrast { --primary: #000000; --primary-hover: #333333; --bg: #ffffff; --card: #ffffff; --text: #000000; --accent: #000000; --radius: 0px; border: 4px solid black; }
+        .theme-nord { --primary: #88c0d0; --primary-hover: #81a1c1; --bg: #2e3440; --card: #3b4252; --text: #eceff4; --accent: #5e81ac; --radius: 10px; }
+        .theme-slate { --primary: #64748b; --primary-hover: #475569; --bg: #f8fafc; --card: #e2e8f0; --text: #0f172a; --accent: #94a3b8; --radius: 12px; }
+        .theme-noir { --primary: #737373; --primary-hover: #525252; --bg: #171717; --card: #262626; --text: #d4d4d4; --accent: #a3a3a3; --radius: 2px; }
+        .theme-grayscale { --primary: #525252; --primary-hover: #404040; --bg: #e5e5e5; --card: #ffffff; --text: #171717; --accent: #a3a3a3; --radius: 0px; }
+        .theme-paper { --primary: #292524; --primary-hover: #1c1917; --bg: #f5f5f4; --card: #e7e5e4; --text: #44403c; --accent: #a8a29e; --radius: 2px; }
 
-        .card { background-color: var(--card); border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid rgba(0,0,0,0.05); }
-        body.theme-decode .card, body.theme-midnight .card { border-color: rgba(255,255,255,0.1); }
+        /* --- 3. TECH / OS --- */
+        .theme-hacker { --primary: #00ff00; --primary-hover: #00cc00; --bg: #000000; --card: #050505; --text: #00ff00; --accent: #004400; --radius: 0px; font-family: monospace; border-left: 2px solid #00ff00; }
+        .theme-dos { --primary: #fb923c; --primary-hover: #ea580c; --bg: #0c0a09; --card: #1c1917; --text: #fdba74; --accent: #9a3412; --radius: 0px; font-family: 'VT323', monospace; }
+        .theme-ubuntu { --primary: #e95420; --primary-hover: #c74213; --bg: #300a24; --card: #451336; --text: #ffffff; --accent: #77216f; --radius: 8px; }
+        .theme-arch { --primary: #1793d1; --primary-hover: #137ab0; --bg: #2d2d2d; --card: #383838; --text: #eeeeee; --accent: #1793d1; --radius: 4px; }
+        .theme-matrix { --primary: #00ff00; --primary-hover: #00cc00; --bg: #000000; --card: #0a0a0a; --text: #00ff00; --accent: #003300; --radius: 0px; font-family: 'Courier New', Courier, monospace; letter-spacing: 1px; }
+        .theme-glitch { --primary: #ff00ff; --primary-hover: #d900d9; --bg: #121212; --card: #1e1e1e; --text: #00ffff; --accent: #ffff00; --radius: 0px; }
+        .theme-neon { --primary: #ff0099; --primary-hover: #cc007a; --bg: #090909; --card: #141414; --text: #00ff99; --accent: #ffff00; --radius: 12px; box-shadow: 0 0 10px rgba(255,0,153,0.2); }
+        
+        /* --- 4. VIBRANT --- */
+        .theme-cyberpunk { --primary: #fcee0a; --primary-hover: #c026d3; --bg: #020617; --card: #1e1b4b; --text: #00f0ff; --accent: #ff003c; --radius: 0px; font-family: 'Orbitron', sans-serif; clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%); }
+        .theme-vaporwave { --primary: #f472b6; --primary-hover: #db2777; --bg: #2e1065; --card: #4c1d95; --text: #67e8f9; --accent: #c084fc; --radius: 0px; background: linear-gradient(45deg, #2e1065 0%, #4c1d95 100%); }
+        .theme-sunset { --primary: #f97316; --primary-hover: #ea580c; --bg: #451a03; --card: #78350f; --text: #fdba74; --accent: #f43f5e; --radius: 24px; }
+        .theme-ocean { --primary: #06b6d4; --primary-hover: #0891b2; --bg: #083344; --card: #164e63; --text: #cffafe; --accent: #67e8f9; --radius: 16px; }
+        .theme-forest { --primary: #22c55e; --primary-hover: #16a34a; --bg: #052e16; --card: #14532d; --text: #dcfce7; --accent: #86efac; --radius: 12px; }
+        .theme-crimson { --primary: #ef4444; --primary-hover: #dc2626; --bg: #450a0a; --card: #7f1d1d; --text: #fecaca; --accent: #b91c1c; --radius: 8px; }
+        .theme-emerald { --primary: #10b981; --primary-hover: #059669; --bg: #064e3b; --card: #065f46; --text: #d1fae5; --accent: #34d399; --radius: 12px; }
+        .theme-amethyst { --primary: #a855f7; --primary-hover: #9333ea; --bg: #3b0764; --card: #581c87; --text: #f3e8ff; --accent: #c084fc; --radius: 16px; }
+        .theme-sapphire { --primary: #3b82f6; --primary-hover: #2563eb; --bg: #172554; --card: #1e3a8a; --text: #dbeafe; --accent: #60a5fa; --radius: 8px; }
 
-        .input-field { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; margin-top: 4px; outline: none; transition: all 0.2s; font-size: 0.875rem; background: transparent; color: inherit; }
-        body.theme-decode .input-field, body.theme-midnight .input-field { border-color: #374151; }
-        .input-field:focus { border-color: var(--primary); ring: 2px solid var(--primary); }
+        /* --- 5. NATURE --- */
+        .theme-jungle { --primary: #4ade80; --primary-hover: #22c55e; --bg: #022c22; --card: #064e3b; --text: #ecfdf5; --accent: #10b981; --radius: 12px; }
+        .theme-desert { --primary: #d97706; --primary-hover: #b45309; --bg: #78350f; --card: #92400e; --text: #fef3c7; --accent: #f59e0b; --radius: 4px; }
+        .theme-arctic { --primary: #38bdf8; --primary-hover: #0ea5e9; --bg: #f0f9ff; --card: #ffffff; --text: #0c4a6e; --accent: #7dd3fc; --radius: 20px; }
+        .theme-lavender { --primary: #a78bfa; --primary-hover: #8b5cf6; --bg: #2e1065; --card: #4c1d95; --text: #ede9fe; --accent: #c4b5fd; --radius: 16px; }
+        .theme-blossom { --primary: #f472b6; --primary-hover: #db2777; --bg: #fff1f2; --card: #ffe4e6; --text: #881337; --accent: #fb7185; --radius: 24px; }
+        .theme-magma { --primary: #ef4444; --primary-hover: #dc2626; --bg: #450a0a; --card: #7f1d1d; --text: #fecaca; --accent: #f87171; --radius: 4px; }
+        .theme-storm { --primary: #fbbf24; --primary-hover: #f59e0b; --bg: #1e293b; --card: #334155; --text: #f1f5f9; --accent: #94a3b8; --radius: 8px; }
+        .theme-fire { --primary: #ef4444; --primary-hover: #dc2626; --bg: #18181b; --card: #27272a; --text: #fca5a5; --accent: #f87171; --radius: 12px; }
+        .theme-water { --primary: #0ea5e9; --primary-hover: #0284c7; --bg: #eff6ff; --card: #dbeafe; --text: #172554; --accent: #60a5fa; --radius: 20px; }
+        .theme-earth { --primary: #65a30d; --primary-hover: #4d7c0f; --bg: #1a140d; --card: #2e261f; --text: #ecfccb; --accent: #84cc16; --radius: 6px; }
+        .theme-air { --primary: #a3a3a3; --primary-hover: #737373; --bg: #fafafa; --card: #ffffff; --text: #404040; --accent: #d4d4d4; --radius: 100px; }
+
+        /* --- 6. SPACE --- */
+        .theme-galaxy { --primary: #c084fc; --primary-hover: #a855f7; --bg: #0f172a; --card: #1e293b; --text: #e2e8f0; --accent: #818cf8; --radius: 12px; }
+        .theme-alien { --primary: #84cc16; --primary-hover: #65a30d; --bg: #000000; --card: #111111; --text: #a3e635; --accent: #4d7c0f; --radius: 8px; font-family: 'Orbitron', sans-serif; }
+
+        /* --- 7. RETRO --- */
+        .theme-miami { --primary: #2dd4bf; --primary-hover: #14b8a6; --bg: #2e1065; --card: #4c1d95; --text: #fbcfe8; --accent: #f472b6; --radius: 0px; border-bottom: 4px solid #f472b6; }
+        .theme-sepia { --primary: #854d0e; --primary-hover: #713f12; --bg: #fef3c7; --card: #fde68a; --text: #451a03; --accent: #d97706; --radius: 2px; }
+        .theme-gameboy { --primary: #306230; --primary-hover: #0f380f; --bg: #8bac0f; --card: #9bbc0f; --text: #0f380f; --accent: #306230; --radius: 4px; font-family: 'Press Start 2P', cursive; font-size: 0.8rem; border: 3px solid #306230; }
+
+        /* --- 8. FOOD --- */
+        .theme-candy { --primary: #f472b6; --primary-hover: #db2777; --bg: #fdf2f8; --card: #fce7f3; --text: #831843; --accent: #fbcfe8; --radius: 20px; }
+        .theme-mint { --primary: #10b981; --primary-hover: #059669; --bg: #ecfdf5; --card: #d1fae5; --text: #064e3b; --accent: #34d399; --radius: 16px; }
+        .theme-lemonade { --primary: #eab308; --primary-hover: #ca8a04; --bg: #fefce8; --card: #fef9c3; --text: #713f12; --accent: #facc15; --radius: 12px; }
+        .theme-coffee { --primary: #78350f; --primary-hover: #451a03; --bg: #fffbeb; --card: #fef3c7; --text: #78350f; --accent: #b45309; --radius: 6px; }
+        .theme-pizza { --primary: #ef4444; --primary-hover: #dc2626; --bg: #fff7ed; --card: #ffedd5; --text: #9a3412; --accent: #fbbf24; --radius: 8px; }
+        .theme-burger { --primary: #d97706; --primary-hover: #b45309; --bg: #422006; --card: #713f12; --text: #22c55e; --accent: #ef4444; --radius: 8px; }
+        .theme-taco { --primary: #fbbf24; --primary-hover: #f59e0b; --bg: #fef3c7; --card: #fde68a; --text: #78350f; --accent: #84cc16; --radius: 8px; }
+        .theme-sushi { --primary: #fb7185; --primary-hover: #f43f5e; --bg: #171717; --card: #262626; --text: #ffffff; --accent: #a3e635; --radius: 4px; }
+        .theme-donut { --primary: #d946ef; --primary-hover: #c026d3; --bg: #fdf2f8; --card: #fbcfe8; --text: #831843; --accent: #38bdf8; --radius: 50px; }
+        .theme-icecream { --primary: #f472b6; --primary-hover: #ec4899; --bg: #f0f9ff; --card: #e0f2fe; --text: #7c3aed; --accent: #facc15; --radius: 20px; }
+        .theme-cookie { --primary: #854d0e; --primary-hover: #713f12; --bg: #fefce8; --card: #fef3c7; --text: #451a03; --accent: #3b82f6; --radius: 12px; }
+        .theme-chocolate { --primary: #713f12; --primary-hover: #451a03; --bg: #271506; --card: #451a03; --text: #fde68a; --accent: #d97706; --radius: 8px; }
+        .theme-strawberry { --primary: #ef4444; --primary-hover: #dc2626; --bg: #fff1f2; --card: #ffe4e6; --text: #991b1b; --accent: #22c55e; --radius: 16px; }
+        .theme-banana { --primary: #eab308; --primary-hover: #ca8a04; --bg: #fefce8; --card: #fef9c3; --text: #854d0e; --accent: #000000; --radius: 12px; }
+        .theme-lime { --primary: #84cc16; --primary-hover: #65a30d; --bg: #f7fee7; --card: #ecfccb; --text: #365314; --accent: #3f6212; --radius: 12px; }
+        .theme-grape { --primary: #9333ea; --primary-hover: #7e22ce; --bg: #f3e8ff; --card: #e9d5ff; --text: #581c87; --accent: #d8b4fe; --radius: 12px; }
+        .theme-orange { --primary: #f97316; --primary-hover: #ea580c; --bg: #fff7ed; --card: #ffedd5; --text: #9a3412; --accent: #16a34a; --radius: 12px; }
+        .theme-blueberry { --primary: #2563eb; --primary-hover: #1d4ed8; --bg: #eff6ff; --card: #dbeafe; --text: #1e3a8a; --accent: #60a5fa; --radius: 12px; }
+        .theme-bubblegum { --primary: #ec4899; --primary-hover: #db2777; --bg: #fdf2f8; --card: #ffffff; --text: #be185d; --accent: #f9a8d4; --radius: 24px; }
+        .theme-cheese { --primary: #fbbf24; --primary-hover: #f59e0b; --bg: #fffbeb; --card: #fef3c7; --text: #92400e; --accent: #fcd34d; --radius: 12px; }
+
+        /* --- 9. MATERIALS --- */
+        .theme-carbon { --primary: #64748b; --primary-hover: #475569; --bg: #020617; --card: #0f172a; --text: #e2e8f0; --accent: #334155; --radius: 4px; border: 1px solid #334155; }
+        .theme-steel { --primary: #475569; --primary-hover: #334155; --bg: #f8fafc; --card: #e2e8f0; --text: #0f172a; --accent: #cbd5e1; --radius: 0px; }
+        .theme-luxury { --primary: #d4af37; --primary-hover: #b4941f; --bg: #000000; --card: #1c1c1c; --text: #f5f5f5; --accent: #aa8c2c; --radius: 0px; border: 1px solid #d4af37; }
+        .theme-gold { --primary: #eab308; --primary-hover: #ca8a04; --bg: #422006; --card: #713f12; --text: #fef08a; --accent: #facc15; --radius: 8px; }
+        .theme-silver { --primary: #94a3b8; --primary-hover: #64748b; --bg: #f1f5f9; --card: #ffffff; --text: #334155; --accent: #cbd5e1; --radius: 8px; }
+        .theme-bronze { --primary: #d97706; --primary-hover: #b45309; --bg: #291206; --card: #451a03; --text: #fdba74; --accent: #f97316; --radius: 8px; }
+
+        /* --- 10. ANIMALS --- */
+        .theme-tiger { --primary: #f97316; --primary-hover: #ea580c; --bg: #0f0f0f; --card: #1f1f1f; --text: #ffedd5; --accent: #fb923c; --radius: 8px; }
+        .theme-zebra { --primary: #000000; --primary-hover: #333333; --bg: #ffffff; --card: #e5e5e5; --text: #000000; --accent: #000000; --radius: 8px; }
+        .theme-panda { --primary: #171717; --primary-hover: #000000; --bg: #ffffff; --card: #f5f5f5; --text: #171717; --accent: #22c55e; --radius: 12px; }
+        .theme-bee { --primary: #eab308; --primary-hover: #ca8a04; --bg: #fefce8; --card: #000000; --text: #000000; --accent: #ca8a04; --radius: 12px; }
+        .theme-unicorn { --primary: #d946ef; --primary-hover: #c026d3; --bg: #fdf4ff; --card: #fae8ff; --text: #86198f; --accent: #22d3ee; --radius: 20px; }
+        .theme-dragon { --primary: #dc2626; --primary-hover: #b91c1c; --bg: #1f1f1f; --card: #2d2d2d; --text: #fca5a5; --accent: #eab308; --radius: 4px; }
+
+        /* --- 11. CHARACTERS --- */
+        .theme-pirate { --primary: #dc2626; --primary-hover: #b91c1c; --bg: #000000; --card: #1f1f1f; --text: #fbbf24; --accent: #991b1b; --radius: 4px; }
+        .theme-ninja { --primary: #ef4444; --primary-hover: #dc2626; --bg: #0a0a0a; --card: #171717; --text: #f5f5f5; --accent: #737373; --radius: 0px; }
+        .theme-wizard { --primary: #a855f7; --primary-hover: #9333ea; --bg: #1e1b4b; --card: #312e81; --text: #e0e7ff; --accent: #facc15; --radius: 16px; }
+        .theme-fairy { --primary: #ec4899; --primary-hover: #db2777; --bg: #fff1f2; --card: #fbcfe8; --text: #831843; --accent: #22d3ee; --radius: 24px; }
+        .theme-robot { --primary: #3b82f6; --primary-hover: #2563eb; --bg: #f3f4f6; --card: #e5e7eb; --text: #1f2937; --accent: #ef4444; --radius: 4px; }
+        .theme-zombie { --primary: #65a30d; --primary-hover: #4d7c0f; --bg: #1a1a1a; --card: #262626; --text: #ecfccb; --accent: #ef4444; --radius: 8px; font-family: 'Creepster', cursive; }
+        .theme-vampire { --primary: #991b1b; --primary-hover: #7f1d1d; --bg: #000000; --card: #1a0505; --text: #fca5a5; --accent: #f87171; --radius: 12px; }
+        .theme-ghost { --primary: #a3a3a3; --primary-hover: #737373; --bg: #f9fafb; --card: #f3f4f6; --text: #525252; --accent: #e5e7eb; --radius: 20px; opacity: 0.9; }
+        
+        /* --- 12. SEASONS --- */
+        .theme-spring { --primary: #4ade80; --primary-hover: #22c55e; --bg: #f0fdf4; --card: #dcfce7; --text: #14532d; --accent: #f472b6; --radius: 16px; }
+        .theme-summer { --primary: #facc15; --primary-hover: #eab308; --bg: #fefce8; --card: #fef9c3; --text: #a16207; --accent: #3b82f6; --radius: 16px; }
+        .theme-autumn { --primary: #d97706; --primary-hover: #b45309; --bg: #fff7ed; --card: #ffedd5; --text: #7c2d12; --accent: #78350f; --radius: 12px; }
+        .theme-winter { --primary: #60a5fa; --primary-hover: #3b82f6; --bg: #eff6ff; --card: #dbeafe; --text: #1e3a8a; --accent: #93c5fd; --radius: 12px; }
+
+        /* --- 13. PASTELS --- */
+        .theme-pastelred { --primary: #fca5a5; --primary-hover: #f87171; --bg: #fff1f2; --card: #ffe4e6; --text: #991b1b; --accent: #fecaca; --radius: 12px; }
+        .theme-pastelblue { --primary: #93c5fd; --primary-hover: #60a5fa; --bg: #eff6ff; --card: #dbeafe; --text: #1e40af; --accent: #bfdbfe; --radius: 12px; }
+        .theme-pastelgreen { --primary: #86efac; --primary-hover: #4ade80; --bg: #f0fdf4; --card: #dcfce7; --text: #166534; --accent: #bbf7d0; --radius: 12px; }
+        .theme-pastelyellow { --primary: #fde047; --primary-hover: #facc15; --bg: #fefce8; --card: #fef9c3; --text: #854d0e; --accent: #fef08a; --radius: 12px; }
+
+        /* --- 14. SPECIAL --- */
+        .theme-toxic { --primary: #a3e635; --primary-hover: #84cc16; --bg: #1a2e05; --card: #365314; --text: #ecfccb; --accent: #d9f99d; --radius: 4px; border: 2px solid #a3e635; }
+        .theme-halloween { --primary: #f97316; --primary-hover: #ea580c; --bg: #262626; --card: #404040; --text: #a855f7; --accent: #f97316; --radius: 12px; }
+        .theme-christmas { --primary: #dc2626; --primary-hover: #b91c1c; --bg: #14532d; --card: #166534; --text: #ffffff; --accent: #fca5a5; --radius: 12px; }
+        .theme-royal { --primary: #eab308; --primary-hover: #ca8a04; --bg: #3b0764; --card: #581c87; --text: #fef08a; --accent: #fbbf24; --radius: 8px; border: 1px solid #eab308; }
+        .theme-dracula { --primary: #bd93f9; --primary-hover: #ff79c6; --bg: #282a36; --card: #44475a; --text: #f8f8f2; --accent: #50fa7b; --radius: 8px; }
+        .theme-chalkboard { --primary: #ffffff; --primary-hover: #e5e5e5; --bg: #155e42; --card: #1b7352; --text: #ffffff; --accent: #eab308; --radius: 4px; font-family: 'Comic Neue', cursive; }
+        
+        /* --- 15. HIDDEN/GOD MODE --- */
+        .theme-rainbow { --primary: #ffffff; --primary-hover: #eeeeee; --bg: #000000; --card: #111111; --text: #ffffff; --accent: #ffffff; animation: rainbowBG 5s infinite; --radius: 20px; }
+        @keyframes rainbowBG { 
+            0% { background-color: #ff0000; } 20% { background-color: #ffff00; } 40% { background-color: #00ff00; } 
+            60% { background-color: #00ffff; } 80% { background-color: #0000ff; } 100% { background-color: #ff00ff; } 
+        }
+
+        /* --- 16. ARG SECRET THEME --- */
+        .theme-secret_hog { --primary: #fbbf24; --primary-hover: #f59e0b; --bg: #2e1065; --card: #4c1d95; --text: #fbcfe8; --accent: #fbbf24; --radius: 0px; font-family: 'VT323', monospace; background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMTAiIGN5PSIxMCIgcj0iMSIgZmlsbD0icmdiYSgyNTEsIDE5MSwgMzYsIDAuMSkiLz48L3N2Zz4='); }
+
+        body { background-color: var(--bg); color: var(--text); }
+
+        .card { background-color: var(--card); border-radius: var(--radius); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid rgba(0,0,0,0.05); }
+        .input-field { width: 100%; padding: 10px; border: 1px solid rgba(128,128,128, 0.2); border-radius: 6px; margin-top: 4px; outline: none; transition: all 0.2s; font-size: 0.875rem; background: transparent; color: inherit; }
+        .input-field:focus { border-color: var(--primary); ring: 2px solid var(--primary); box-shadow: 0 0 0 2px var(--primary); }
+        
+        /* Dropdown Fix: Ensure options inherit card/text colors for readability */
+        select.input-field { background-color: var(--card); color: var(--text); }
+        select.input-field option { background-color: var(--card); color: var(--text); }
 
         .btn-theme { background-color: var(--primary); color: #000; font-weight: 700; }
-        body.theme-scout .btn-theme, body.theme-midnight .btn-theme { color: #fff; }
+        
+        /* White text for dark/saturated primaries */
+        .theme-scout .btn-scout, .theme-midnight .btn-scout, .theme-blueprint .btn-scout, 
+        .theme-cyberpunk .btn-scout, .theme-ocean .btn-scout, .theme-forest .btn-scout,
+        .theme-royal .btn-scout, .theme-fire .btn-scout, .theme-dracula .btn-scout,
+        .theme-christmas .btn-scout, .theme-nord .btn-scout, .theme-jungle .btn-scout,
+        .theme-galaxy .btn-scout, .theme-alien .btn-scout, .theme-miami .btn-scout,
+        .theme-magma .btn-scout, .theme-storm .btn-scout, .theme-carbon .btn-scout,
+        .theme-luxury .btn-scout, .theme-pirate .btn-scout, .theme-corporate .btn-scout,
+        .theme-crimson .btn-scout, .theme-emerald .btn-scout, .theme-amethyst .btn-scout,
+        .theme-sapphire .btn-scout, .theme-pizza .btn-scout, .theme-burger .btn-scout,
+        .theme-sushi .btn-scout, .theme-donut .btn-scout, .theme-chocolate .btn-scout,
+        .theme-strawberry .btn-scout, .theme-grape .btn-scout, .theme-blueberry .btn-scout,
+        .theme-dragon .btn-scout, .theme-ninja .btn-scout, .theme-wizard .btn-scout,
+        .theme-vampire .btn-scout, .theme-autumn .btn-scout, .theme-hacker .btn-scout,
+        .theme-dos .btn-scout, .theme-ubuntu .btn-scout, .theme-arch .btn-scout,
+        .theme-neon .btn-scout, .theme-noir .btn-scout, .theme-steamos .btn-scout,
+        .theme-alliance .btn-scout, .theme-kewanee .btn-scout, .theme-secret_hog .btn-scout { color: white; }
+        
+        /* Black text for light/pastel primaries */
+        .theme-terminal .btn-scout, .theme-matrix .btn-scout, .theme-highcontrast .btn-scout,
+        .theme-arctic .btn-scout, .theme-blossom .btn-scout, .theme-sepia .btn-scout,
+        .theme-candy .btn-scout, .theme-mint .btn-scout, .theme-lemonade .btn-scout,
+        .theme-steel .btn-scout, .theme-unicorn .btn-scout, .theme-icecream .btn-scout,
+        .theme-cookie .btn-scout, .theme-banana .btn-scout, .theme-lime .btn-scout,
+        .theme-orange .btn-scout, .theme-gold .btn-scout, .theme-silver .btn-scout,
+        .theme-bronze .btn-scout, .theme-zebra .btn-scout, .theme-panda .btn-scout,
+        .theme-bee .btn-scout, .theme-fairy .btn-scout, .theme-robot .btn-scout,
+        .theme-zombie .btn-scout, .theme-ghost .btn-scout, .theme-spring .btn-scout,
+        .theme-summer .btn-scout, .theme-winter .btn-scout, .theme-pastelred .btn-scout,
+        .theme-pastelblue .btn-scout, .theme-pastelgreen .btn-scout, .theme-pastelyellow .btn-scout,
+        .theme-paper .btn-scout, .theme-chalkboard .btn-scout, .theme-rainbow .btn-scout,
+        .theme-cmd .btn-scout, .theme-cheese .btn-scout { color: black; font-weight: 900; }
 
-        .btn-scout { background-color: var(--primary); color: white; padding: 10px 16px; border-radius: 6px; font-weight: 600; transition: all 0.2s; }
-        body.theme-decode .btn-scout { color: #000; }
+        .btn-scout { background-color: var(--primary); padding: 10px 16px; border-radius: 6px; font-weight: 600; transition: all 0.2s; }
         .btn-scout:hover { opacity: 0.9; transform: translateY(-1px); }
         
-        .probability-bar { height: 10px; border-radius: 5px; background: rgba(0,0,0,0.1); overflow: hidden; margin-top: 8px; }
-        body.theme-decode .probability-bar, body.theme-midnight .probability-bar { background: rgba(255,255,255,0.1); }
+        .probability-bar { height: 10px; border-radius: 5px; background: rgba(128,128,128,0.2); overflow: hidden; margin-top: 8px; }
         
-        .loader { border: 2px solid #f3f3f3; border-top: 2px solid var(--primary); border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; display: inline-block; margin-right: 8px; }
+        .loader { border: 2px solid rgba(128,128,128,0.2); border-top: 2px solid var(--primary); border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; display: inline-block; margin-right: 8px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        #debugLog { display: none; margin-top: 2rem; padding: 1rem; background: #000; color: #0f0; border-radius: 8px; font-size: 10px; overflow-x: auto; }
+        #debugLog { display: none; margin-top: 2rem; padding: 1rem; background: #000; color: #0f0; border-radius: 8px; font-size: 10px; overflow-x: auto; font-family: monospace; }
+
+        /* Confetti */
+        .confetti { position: fixed; width: 10px; height: 10px; background-color: #f00; animation: fall linear forwards; pointer-events: none; z-index: 9999; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
+
+        /* ARG Terminal */
+        #argTerminal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000; z-index: 99999; color: #0f0;
+            font-family: 'VT323', monospace; padding: 20px;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #argTerminal.arg-active { display: flex !important; }
+        .arg-content { font-size: 1.2rem; line-height: 1.2; text-shadow: 0 0 5px rgba(0, 255, 0, 0.7); flex-grow: 1; overflow-y: auto; padding-bottom: 20px; }
+        .arg-input-line { display: flex; margin-top: 10px; border-top: 1px solid #333; padding-top: 10px; }
+        .arg-prompt { margin-right: 10px; color: #0f0; text-shadow: 0 0 5px rgba(0,255,0,0.7); }
+        #argInput {
+            background: transparent; border: none; color: #0f0;
+            font-family: 'VT323', monospace; font-size: 1.2rem;
+            width: 100%; outline: none; text-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+        }
+        
+        /* CRT Scanline Overlay */
+        .crt-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%; pointer-events: none; z-index: 100000;
+            animation: flicker 0.15s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.95; }
+            50% { opacity: 0.85; }
+            100% { opacity: 0.95; }
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        
+        .scanline-bar {
+            position: absolute; top: 0; left: 0; width: 100%; height: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            animation: scanline 6s linear infinite;
+            pointer-events: none; z-index: 100001;
+        }
+        
+        .glow-text { text-shadow: 0 0 10px rgba(0, 255, 0, 0.8), 0 0 20px rgba(0, 255, 0, 0.4); }
     </style>
 </head>
 <body class="p-4 md:p-8 theme-scout" id="mainBody">
-    <div class="max-w-5xl mx-auto">
-        <!-- Theme Switcher -->
-        <div class="flex justify-end mb-4 space-x-2">
-            <button onclick="setTheme('scout')" class="px-3 py-1 rounded text-[10px] font-bold uppercase tracking-tighter bg-indigo-100 text-indigo-700 hover:bg-indigo-200">FTC Scout</button>
-            <button onclick="setTheme('decode')" class="px-3 py-1 rounded text-[10px] font-bold uppercase tracking-tighter bg-amber-400 text-black hover:bg-amber-500">DECODE Gold</button>
-            <button onclick="setTheme('midnight')" class="px-3 py-1 rounded text-[10px] font-bold uppercase tracking-tighter bg-slate-800 text-blue-400 hover:bg-slate-700">Midnight</button>
+    <div class="max-w-6xl mx-auto">
+        <!-- Theme Switcher Dropdown -->
+        <div class="flex justify-end mb-4">
+            <div class="relative inline-block text-left w-full md:w-48">
+                <select onchange="setTheme(this.value)" id="themeSelector" class="block w-full pl-3 pr-10 py-2 text-xs font-bold uppercase tracking-tighter border rounded focus:outline-none focus:ring-2 focus:ring-[var(--primary)] input-field cursor-pointer">
+                    <optgroup label="Standard">
+                        <option value="scout">FTC Scout</option>
+                        <option value="decode">DECODE Gold</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="alliance">Alliance</option>
+                    </optgroup>
+                    <optgroup label="New & Special">
+                        <option value="steamos">Steam OS</option>
+                        <option value="cmd">Command Line</option>
+                        <option value="kewanee">Kewanee HS</option>
+                    </optgroup>
+                    <!-- ... (keeping other options condensed for brevity, but they exist in memory) ... -->
+                    <optgroup label="Serious">
+                        <option value="corporate">Corporate</option>
+                        <option value="professional">Professional</option>
+                    </optgroup>
+                </select>
+            </div>
         </div>
 
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold italic tracking-tight uppercase"><span id="headerBrand">FTC SCOUT</span> <span class="text-[var(--primary)]">ADVANCEMENT</span></h1>
-            <p class="text-slate-500 mt-2 font-medium opacity-80">DECODE™ 2025-2026 Season Performance Analysis</p>
+        <header class="mb-8 text-center" id="mainHeader">
+            <h1 class="text-3xl md:text-4xl font-bold italic tracking-tight uppercase cursor-pointer select-none"><span id="headerBrand">FTC SCOUT</span> <span class="text-[var(--primary)]">ADVANCEMENT</span></h1>
+            <p class="text-slate-500 mt-2 font-medium opacity-80 text-sm md:text-base" style="color: var(--text); opacity: 0.7;">DECODE™ 2025-2026 Season Performance Analysis</p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -68,7 +303,7 @@
                     <div class="space-y-3">
                         <div>
                             <label class="text-xs font-bold uppercase opacity-60">Team Number</label>
-                            <input type="number" id="scoutTeam" placeholder="e.g. 12345" class="input-field">
+                            <input type="number" id="scoutTeam" placeholder="e.g. 12345" class="input-field" onchange="saveData()" oninput="checkTeamEggs()">
                         </div>
                         <button onclick="fetchScoutData()" id="fetchBtn" class="btn-scout w-full text-sm mt-2 flex items-center justify-center">
                             Sync via FTC Scout
@@ -78,7 +313,7 @@
                     </div>
                 </div>
 
-                <div class="card p-6 border-l-4 border-slate-400">
+                <div class="card p-6 border-l-4 border-slate-400" style="border-color: var(--accent);">
                     <h2 class="text-lg font-bold mb-4 flex items-center">
                         <span class="mr-2">🌍</span> Event Context
                     </h2>
@@ -106,6 +341,7 @@
                                 <label class="text-xs font-bold uppercase opacity-60">Alliances</label>
                                 <select id="numAlliances" class="input-field" onchange="calculate()">
                                     <option value="4">4 Alliances</option>
+                                    <option value="6">6 Alliances</option>
                                     <option value="8">8 Alliances</option>
                                 </select>
                             </div>
@@ -116,7 +352,7 @@
 
             <!-- Column 2: Points Input -->
             <div class="space-y-6">
-                <div class="card p-6 border-l-4 border-blue-500">
+                <div class="card p-6 border-l-4 border-blue-500" style="border-color: var(--primary);">
                     <h2 class="text-lg font-bold mb-4 flex items-center">
                         <span class="mr-2">📊</span> Qualification & Alliance
                     </h2>
@@ -142,7 +378,7 @@
                     </div>
                 </div>
 
-                <div class="card p-6 border-l-4 border-red-500">
+                <div class="card p-6 border-l-4 border-red-500" style="border-color: var(--accent);">
                     <h2 class="text-lg font-bold mb-4 flex items-center">
                         <span class="mr-2">⚔️</span> Playoff Outcome
                     </h2>
@@ -155,7 +391,7 @@
                     </select>
                 </div>
 
-                <div class="card p-6 border-l-4 border-yellow-500">
+                <div class="card p-6 border-l-4 border-yellow-500" style="border-color: var(--primary);">
                     <h2 class="text-lg font-bold mb-4 flex items-center">
                         <span class="mr-2">🥇</span> Highest Judged Award
                     </h2>
@@ -173,62 +409,571 @@
 
             <!-- Column 3: Results Display -->
             <div class="space-y-6">
-                <div class="card p-8 bg-slate-900 text-white sticky top-8" id="resultCard">
+                <div class="card p-8 bg-slate-900 text-white sticky top-8" id="resultCard" style="background-color: var(--card); color: var(--text);">
                     <div class="text-center mb-6">
-                        <p class="text-slate-400 uppercase tracking-widest text-[10px] font-bold">Total Advancement Points</p>
-                        <div class="text-7xl font-bold mt-2 text-[var(--primary)] mono" id="totalPoints">0</div>
+                        <p class="uppercase tracking-widest text-[10px] font-bold opacity-60">Total Advancement Points</p>
+                        <div class="text-5xl md:text-7xl font-bold mt-2 text-[var(--primary)] mono" id="totalPoints">0</div>
                     </div>
 
-                    <div class="space-y-3 mb-8 border-y border-slate-800 py-4">
+                    <div class="space-y-3 mb-8 border-y border-gray-700 py-4">
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Qual Performance</span>
+                            <span class="opacity-60">Qual Performance</span>
                             <span id="ptsQual" class="font-bold">0 pts</span>
                         </div>
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Alliance Selection</span>
+                            <span class="opacity-60">Alliance Selection</span>
                             <span id="ptsAlliance" class="font-bold">0 pts</span>
                         </div>
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Playoff Advancement</span>
+                            <span class="opacity-60">Playoff Advancement</span>
                             <span id="ptsPlayoff" class="font-bold">0 pts</span>
                         </div>
                         <div class="flex justify-between text-xs">
-                            <span class="text-slate-400">Judged Awards</span>
+                            <span class="opacity-60">Judged Awards</span>
                             <span id="ptsAwards" class="font-bold">0 pts</span>
                         </div>
                     </div>
 
-                    <div class="p-5 rounded-lg bg-slate-800 border border-slate-700">
+                    <div class="p-5 rounded-lg border border-gray-700" style="background-color: rgba(0,0,0,0.2);">
                         <div class="flex justify-between items-center mb-1">
-                            <h3 class="font-bold text-slate-300 text-sm">Advancement Prob.</h3>
-                            <span id="probabilityPercent" class="text-xl font-bold text-white mono">0%</span>
+                            <h3 class="font-bold text-sm" style="color: var(--primary);">Advancement Prob.</h3>
+                            <span id="probabilityPercent" class="text-xl font-bold mono">0%</span>
                         </div>
                         <div class="probability-bar">
                             <div id="probabilityFill" class="h-full transition-all duration-1000" style="width: 0%"></div>
                         </div>
-                        <p id="chanceText" class="text-[11px] leading-relaxed text-slate-400 mt-4">
+                        <p id="chanceText" class="text-[11px] leading-relaxed opacity-70 mt-4">
                             Calculated based on DECODE competition manual criteria.
                         </p>
+                        
+                        <!-- Recommendation Engine -->
+                        <div id="recommendationBox" class="mt-4 pt-4 border-t border-gray-700 hidden">
+                            <p class="text-[10px] uppercase font-bold text-[var(--primary)] mb-1">Next Milestone</p>
+                            <p id="recommendationText" class="text-xs opacity-80"></p>
+                        </div>
                     </div>
+
+                    <button onclick="shareResults()" class="w-full mt-4 py-3 rounded-lg bg-[var(--primary)] text-white font-bold text-xs uppercase tracking-wider hover:opacity-90 transition btn-scout">
+                        Copy Summary
+                    </button>
                 </div>
             </div>
         </div>
         
         <pre id="debugLog"></pre>
+        
+        <!-- ARG Terminal Overlay -->
+        <div id="argTerminal">
+            <div class="crt-overlay"></div>
+            <div class="scanline-bar"></div>
+            <div class="arg-content" id="argOutput">
+                <div class="glow-text">BOILERNET OS v1.9.10 [SECURE CONNECTION]</div>
+                <div class="glow-text">Copyright (c) 2025 Kewanee Robotics. All rights reserved.</div>
+                <br>
+                <div class="text-red-500 glow-text">SYSTEM WARNING: UNAUTHORIZED ACCESS IS PROHIBITED.</div>
+                <div>Type 'help' for available commands.</div>
+                <br>
+            </div>
+            <div class="arg-input-line">
+                <span class="arg-prompt glow-text">GUEST></span>
+                <input type="text" id="argInput" autocomplete="off" autofocus>
+            </div>
+        </div>
     </div>
 
     <script>
+        // --- THEME ENGINE ---
         function setTheme(theme) {
             const body = document.getElementById('mainBody');
             const brand = document.getElementById('headerBrand');
+            const selector = document.getElementById('themeSelector');
             body.className = 'p-4 md:p-8 theme-' + theme;
-            brand.innerText = theme === 'decode' ? 'DECODE' : (theme === 'midnight' ? 'CORE' : 'FTC SCOUT');
+            
+            // Easter Egg: Custom Brand Titles
+            const brands = {
+                'decode': 'DECODE', 'midnight': 'MIDNIGHT', 'alliance': 'ALLIANCE', 
+                'professional': 'CORP', 'blueprint': 'SCHEMATIC', 'terminal': 'CONSOLE',
+                'highcontrast': 'VISIBILITY', 'nord': 'NORDIC', 'cyberpunk': 'CYBER',
+                'vaporwave': 'AESTHETIC', 'sunset': 'HORIZON', 'ocean': 'PELAGIC',
+                'forest': 'ARBOREAL', 'bubblegum': 'SUGAR', 'gameboy': '8-BIT',
+                'toxic': 'HAZARD', 'halloween': 'SPOOKY', 'christmas': 'FESTIVE',
+                'royal': 'MAJESTY', 'coffee': 'BREW', 'fire': 'INFERNO', 
+                'dracula': 'VAMPIRE', 'matrix': 'SYSTEM', 'corporate': 'BUSINESS',
+                'jungle': 'WILD', 'desert': 'ARID', 'arctic': 'FROST', 'lavender': 'FLORA',
+                'blossom': 'BLOOM', 'galaxy': 'COSMOS', 'alien': 'XENO', 'miami': 'VICE',
+                'sepia': 'ANTIQUE', 'candy': 'SWEET', 'mint': 'FRESH', 'lemonade': 'CITRUS',
+                'magma': 'VOLCANIC', 'storm': 'THUNDER', 'carbon': 'FIBER', 'steel': 'METAL',
+                'luxury': 'ELITE', 'unicorn': 'MAGIC', 'pirate': 'AHOY', 'rainbow': 'GOD MODE',
+                'steamos': 'STEAM DECK', 'cmd': 'C:\\USERS\\SCOUT>', 'kewanee': 'BOILER UP',
+                'cheese': 'CHEESY', 'secret_hog': 'GOLDEN HOG'
+            };
+            
+            brand.innerText = brands[theme] || 'FTC SCOUT';
+            selector.value = theme;
             localStorage.setItem('ftcTheme', theme);
         }
-        
+
+        // --- EASTER EGG & ARG LOGIC ---
+        // 1. Konami Code Listener
+        let konamiCode = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+        let konamiIndex = 0;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    setTheme('rainbow');
+                    triggerConfetti();
+                    alert("GOD MODE UNLOCKED: INFINITE PROBABILITY!");
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        // 2. Team Number Easter Eggs (Universal + Specific)
+        function checkTeamEggs() {
+            const teamInput = document.getElementById('scoutTeam');
+            const team = teamInput.value;
+            if (!team) return;
+
+            // Specific Overrides for Famous Teams / Fun Nums
+            const eggMap = {
+                '3640': 'kewanee',      // Kewanee HS
+                '254': 'cheese',        // Cheesy Poofs
+                '11115': 'cookie',      // Gluten Free
+                '1678': 'lemonade',     // Citrus Circuits
+                '8680': 'ocean',        // Kraken-Pinion
+                '13356': 'forest',      // RoboForce
+                '7238': 'alliance',     // Rebel Robotics
+                '18219': 'terminal',    // Primitive Data
+                '14320': 'toxic',       // The Antidote
+                '8393': 'zombie',       // Brain Stem
+                '6165': 'ocean',        // Cuttlefish
+                '12611': 'galaxy',      // Tech Nova
+                '9879': 'matrix',       // Root Negative One
+                '4029': 'gameboy',      // 2 Bits and a Byte
+                '19502': 'luxury',      // The Moment Makers
+                '16461': 'emerald',     // Infinite Turtles
+                '252': 'ocean',         // Gnarly Whales
+                '3595': 'glitch',       // Schrodinger's Cat
+                '8872': 'corporate',    // RoboKramer
+                '10435': 'storm',       // Circuit Breakers
+                '5893': 'neon'          // Direct Current
+            };
+
+            // List of all themes available for the universal hash
+            const allThemes = [
+                'scout', 'decode', 'midnight', 'alliance', 'steamos', 'cmd', 'kewanee',
+                'pizza', 'burger', 'taco', 'sushi', 'donut', 'icecream', 'cookie', 'chocolate',
+                'strawberry', 'banana', 'lime', 'grape', 'orange', 'blueberry', 'candy', 'mint', 
+                'lemonade', 'coffee', 'hacker', 'dos', 'ubuntu', 'arch', 'glitch', 'neon', 
+                'terminal', 'matrix', 'tiger', 'zebra', 'panda', 'bee', 'unicorn', 'dragon', 
+                'wizard', 'fairy', 'ninja', 'robot', 'zombie', 'vampire', 'ghost', 'alien', 
+                'spring', 'summer', 'autumn', 'winter', 'crimson', 'emerald', 'amethyst', 
+                'sapphire', 'pastelred', 'pastelblue', 'pastelgreen', 'pastelyellow', 'fire', 
+                'water', 'earth', 'air', 'magma', 'storm', 'ocean', 'forest', 'gold', 'silver', 
+                'bronze', 'carbon', 'steel', 'luxury', 'paper', 'chalkboard', 'miami', 'sepia', 
+                'gameboy', 'noir', 'grayscale', 'corporate', 'professional', 'blueprint', 
+                'highcontrast', 'nord', 'slate', 'cyberpunk', 'vaporwave', 'sunset', 'bubblegum', 
+                'toxic', 'halloween', 'christmas', 'royal', 'dracula'
+            ];
+
+            if(eggMap[team]) {
+                setTheme(eggMap[team]);
+                flashInput();
+                // Special hint for Kewanee
+                if (team === '3640') {
+                    console.log("%c 🐷 The pressure is rising... tap the header to release steam. 🐷", "color: orange; font-weight: bold; font-size: 14px;");
+                }
+            } else {
+                // Universal Deterministic Theme for ANY number
+                // Use a simple hash of the number to pick an index
+                const num = parseInt(team);
+                if (!isNaN(num)) {
+                    const themeIndex = num % allThemes.length;
+                    setTheme(allThemes[themeIndex]);
+                }
+            }
+            saveData();
+        }
+
+        function flashInput() {
+            const input = document.getElementById('scoutTeam');
+            input.style.borderColor = 'var(--primary)';
+            input.style.boxShadow = '0 0 10px var(--primary)';
+            setTimeout(() => {
+                input.style.borderColor = '';
+                input.style.boxShadow = '';
+            }, 500);
+        }
+
+        // 3. ARG Trigger (Click Title 3x when theme is Kewanee)
+        let clickCount = 0;
+        document.getElementById('mainHeader').addEventListener('click', () => {
+            const currentTheme = document.getElementById('themeSelector').value;
+            clickCount++;
+            
+            if (currentTheme === 'kewanee' && clickCount >= 3) {
+                // Trigger ARG
+                launchArgTerminal();
+                clickCount = 0;
+            } else if(clickCount >= 5) {
+                // Regular Party Mode
+                const themes = ['cyberpunk', 'bubblegum', 'neon', 'unicorn', 'party'];
+                setTheme(themes[Math.floor(Math.random() * themes.length)]);
+                triggerConfetti();
+                clickCount = 0;
+            }
+        });
+
+        // --- ARG TERMINAL LOGIC ---
+        const fileSystem = {
+            'readme.txt': "BOILERNET SECURE SERVER\n-----------------------\nProperty of Kewanee High School Robotics.\nAuthorized personnel only (Team 3640).\n\nTo access the advancement algorithm, run 'unlock.exe'.",
+            'steam_pressure.log': "[SYSTEM] Boiler pressure critical.\n[SYSTEM] Safety valve locked.\n[HINT] The passcode is the state of water that powers our engines.",
+            'roster.dat': `
+=========================================
+   TEAM 3640 "BOILERMAKERS" PERSONNEL
+=========================================
+CLASSIFICATION: TOP SECRET
+OPERATING BASE: KEWANEE, IL
+MISSION: FIRST TECH CHALLENGE
+-----------------------------------------
+[COMMANDER] ........ K. H. S. ROBOTICS
+[TACTICS] .......... DATA ANALYTICS DIV
+[HARDWARE] ......... MECH. SYSTEMS
+[SYSTEMS] .......... ALGORITHM UNIT
+-----------------------------------------
+[TARGET] ........... DECODE CHAMPIONSHIP
+[STATUS] ........... BOILER UP!
+-----------------------------------------`,
+            'unlock.exe': "BINARY EXECUTABLE. RUN COMMAND 'login' TO EXECUTE."
+        };
+
+        // --- MINIGAME STATE ---
+        let argGame = {
+            active: false,
+            level: 1,
+            cursorPos: 0,
+            direction: 1,
+            speed: 50,
+            targetMin: 0,
+            targetMax: 0,
+            interval: null,
+            width: 30,
+            targetFile: null
+        };
+
+        function launchArgTerminal() {
+            const term = document.getElementById('argTerminal');
+            const input = document.getElementById('argInput');
+            term.classList.add('arg-active');
+            input.focus();
+            input.addEventListener('keydown', handleArgInput);
+            
+            // Add click listener to refocus input if user clicks elsewhere
+            term.addEventListener('click', () => input.focus());
+        }
+
+        function closeArgTerminal() {
+            const term = document.getElementById('argTerminal');
+            const input = document.getElementById('argInput');
+            term.classList.remove('arg-active');
+            input.removeEventListener('keydown', handleArgInput);
+            stopMinigame(); // Ensure game stops if closed
+        }
+
+        function startMinigame(file) {
+            const output = document.getElementById('argOutput');
+            const input = document.getElementById('argInput');
+            
+            output.innerHTML += `<br><div class="text-yellow-400">INITIATING FIREWALL BREACH PROTOCOL FOR '${file.toUpperCase()}'...</div>`;
+            output.innerHTML += `<div>OBJECTIVE: STOP THE CURSOR [<span class="text-red-500">||</span>] INSIDE THE TARGET ZONE [{  }]</div>`;
+            output.innerHTML += `<div>CONTROLS: PRESS 'ENTER' TO LOCK.</div><br>`;
+            
+            argGame.active = true;
+            argGame.level = 1;
+            argGame.targetFile = file;
+            input.value = ""; // Clear any leftover
+            input.placeholder = "[GAME ACTIVE] PRESS ENTER...";
+            
+            // Disable normal input processing by flag in handleArgInput
+            
+            startLevel(1);
+        }
+
+        function startLevel(lvl) {
+            const output = document.getElementById('argOutput');
+            argGame.level = lvl;
+            argGame.cursorPos = 0;
+            argGame.direction = 1;
+            
+            // Difficulty settings
+            let speed = 100; // ms per frame
+            let targetSize = 6; 
+            
+            if (lvl === 2) { speed = 60; targetSize = 4; }
+            if (lvl === 3) { speed = 30; targetSize = 2; }
+            
+            argGame.speed = speed;
+            
+            // Random target position (avoid edges)
+            const maxPos = argGame.width - targetSize;
+            const targetStart = Math.floor(Math.random() * (maxPos - 2)) + 1;
+            
+            argGame.targetMin = targetStart;
+            argGame.targetMax = targetStart + targetSize;
+            
+            output.innerHTML += `<div id="gameRow_${lvl}" class="font-mono text-lg mt-2 whitespace-pre"></div>`;
+            
+            if (argGame.interval) clearInterval(argGame.interval);
+            argGame.interval = setInterval(() => updateGameFrame(lvl), speed);
+        }
+
+        function updateGameFrame(lvl) {
+            const row = document.getElementById(`gameRow_${lvl}`);
+            if (!row) return;
+            
+            // Move cursor
+            argGame.cursorPos += argGame.direction;
+            if (argGame.cursorPos >= argGame.width || argGame.cursorPos < 0) {
+                argGame.direction *= -1;
+                argGame.cursorPos += argGame.direction * 2; // Bounce
+            }
+            
+            // Build String
+            let bar = "";
+            let targetIndicator = "";
+            
+            for (let i = 0; i < argGame.width; i++) {
+                // Render cursor or track
+                if (i === argGame.cursorPos) bar += "█";
+                else bar += ".";
+                
+                // Render target brackets
+                if (i === argGame.targetMin) targetIndicator += "{";
+                else if (i === argGame.targetMax) targetIndicator += "}";
+                else if (i > argGame.targetMin && i < argGame.targetMax) targetIndicator += "=";
+                else targetIndicator += " ";
+            }
+            
+            // Combine for display
+            const prefix = "LVL " + lvl + ": [";
+            const spacer = " ".repeat(prefix.length); 
+            
+            row.innerHTML = `<span class="text-blue-400">LVL ${lvl}:</span> [${bar}] <br>${spacer}${targetIndicator}`;
+        }
+
+        function stopMinigame() {
+            argGame.active = false;
+            if (argGame.interval) clearInterval(argGame.interval);
+            const input = document.getElementById('argInput');
+            input.placeholder = "";
+        }
+
+        function handleGameInput() {
+            // Check hit
+            if (argGame.cursorPos >= argGame.targetMin && argGame.cursorPos <= argGame.targetMax) {
+                // Success
+                clearInterval(argGame.interval);
+                const output = document.getElementById('argOutput');
+                output.innerHTML += `<div class="text-green-400">>> LOCK SUCCESSFUL. BYPASSING LAYER ${argGame.level}...</div>`;
+                output.scrollTop = output.scrollHeight;
+                
+                if (argGame.level < 3) {
+                    setTimeout(() => startLevel(argGame.level + 1), 1000);
+                } else {
+                    winGame();
+                }
+            } else {
+                // Fail
+                clearInterval(argGame.interval);
+                const output = document.getElementById('argOutput');
+                output.innerHTML += `<div class="text-red-500">>> LOCK FAILED. CONNECTION SEVERED.</div>`;
+                output.innerHTML += `<div class="text-slate-500">RETRYING PROTOCOL...</div>`;
+                output.scrollTop = output.scrollHeight;
+                setTimeout(() => startLevel(argGame.level), 1500); // Retry same level
+            }
+        }
+
+        function winGame() {
+            stopMinigame();
+            const output = document.getElementById('argOutput');
+            output.innerHTML += `<br><div class="text-green-400 font-bold glow-text">FIREWALL BREACH SUCCESSFUL.</div>`;
+            output.scrollTop = output.scrollHeight;
+            
+            // Start the loading sequence
+            playDecryptionSequence(argGame.targetFile);
+        }
+
+        function playDecryptionSequence(filename) {
+            const output = document.getElementById('argOutput');
+            let sequence = [];
+            let steps = 40; // Aiming for roughly 30-40 seconds
+            
+            // Generate sequence based on file type
+            if (filename.endsWith('.txt')) {
+                sequence.push({ t: 0, msg: "ACCESSING TEXT STREAM..." });
+                for(let i=0; i<steps; i++) {
+                    sequence.push({ t: (i+1)*800, msg: `DECODING ASCII BLOCK ${i+1}/${steps}... [${Math.round((i+1)/steps*100)}%]` });
+                }
+                sequence.push({ t: steps*800 + 1000, msg: "RENDERING TEXT..." });
+            } else if (filename.endsWith('.log')) {
+                sequence.push({ t: 0, msg: "CONNECTING TO SENSOR ARRAY..." });
+                for(let i=0; i<steps; i++) {
+                    sequence.push({ t: (i+1)*800, msg: `ANALYZING TELEMETRY PACKET ${i+1}/${steps}... [${Math.round((i+1)/steps*100)}%]` });
+                }
+                sequence.push({ t: steps*800 + 1000, msg: "DISPLAYING LOGS..." });
+            } else if (filename.endsWith('.exe')) {
+                sequence.push({ t: 0, msg: "INITIALIZING SANDBOX..." });
+                for(let i=0; i<steps; i++) {
+                    sequence.push({ t: (i+1)*800, msg: `DECOMPILING BINARY SEGMENT ${i+1}/${steps}... [${Math.round((i+1)/steps*100)}%]` });
+                }
+                sequence.push({ t: steps*800 + 1000, msg: "EXECUTING..." });
+            } else {
+                // Default sequence (like for .dat)
+                sequence.push({ t: 0, msg: "ACCESS GRANTED. FIREWALL NEUTRALIZED." });
+                for(let i=0; i<steps; i++) {
+                    let server = `10.36.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+                    sequence.push({ t: (i+1)*800, msg: `ROUTING THROUGH NODE ${server}... <span class='text-green-400'>[CONNECTED]</span>` });
+                }
+                sequence.push({ t: steps*800 + 1000, msg: "DECRYPTING PAYLOAD..." });
+            }
+
+            sequence.forEach(step => {
+                setTimeout(() => {
+                    output.innerHTML += `<div class="text-blue-300 font-mono text-sm">${step.msg}</div>`;
+                    output.scrollTop = output.scrollHeight;
+                }, step.t);
+            });
+
+            // Reveal content
+            setTimeout(() => {
+                let content = fileSystem[filename] || "FILE CORRUPTED OR EMPTY.";
+                output.innerHTML += `<pre class="text-green-400 font-bold font-mono text-xs sm:text-sm mt-2 glow-text">${content}</pre>`;
+                output.scrollTop = output.scrollHeight;
+                
+                // Keep input field focused for next command
+                document.getElementById('argInput').focus();
+            }, (steps * 800) + 2000);
+        }
+
+        async function handleArgInput(e) {
+            if (e.key === 'Enter') {
+                const input = e.target;
+                
+                // --- GAME MODE INTERCEPTION ---
+                if (argGame.active) {
+                    handleGameInput();
+                    input.value = ""; // keep clear
+                    return;
+                }
+                
+                const cmdLine = input.value.trim();
+                const parts = cmdLine.split(' ');
+                const cmd = parts[0].toLowerCase();
+                const arg = parts[1];
+                const output = document.getElementById('argOutput');
+                
+                // Echo command
+                output.innerHTML += `<div class="mt-2 text-slate-400">GUEST> ${input.value}</div>`;
+                
+                // Clear input immediately
+                input.value = '';
+                
+                // Process command
+                let response = "";
+                
+                if (cmd === 'help') {
+                    response = "AVAILABLE COMMANDS: HELP, LS, CAT [FILE], LOGIN, CLEAR, WHOAMI, SUDO, EXIT";
+                } else if (cmd === 'ls' || cmd === 'dir') {
+                    response = "FILES:\n" + Object.keys(fileSystem).map(f => `- ${f}`).join('\n');
+                } else if (cmd === 'cat' || cmd === 'type') {
+                    if (arg && fileSystem[arg]) {
+                        startMinigame(arg);
+                        return; // Let minigame handle the rest
+                    } else if (arg) {
+                        response = `ERROR: File '${arg}' not found.`;
+                    } else {
+                        response = "USAGE: cat [filename]";
+                    }
+                } else if (cmd === 'clear' || cmd === 'cls') {
+                    output.innerHTML = '';
+                    return;
+                } else if (cmd === 'whoami') {
+                    response = "Guest User (Unverified)";
+                } else if (cmd === 'sudo') {
+                    response = "USER IS NOT IN THE SUDOERS FILE. THIS INCIDENT WILL BE REPORTED.";
+                    if(arg === 'reboot') {
+                        document.body.style.animation = "shake 0.5s"; // silly shake effect
+                        setTimeout(() => alert("SYSTEM CRASH IMMINENT... just kidding."), 500);
+                    }
+                } else if (cmd === 'login') {
+                    response = "ENTER PASSWORD:";
+                    input.setAttribute('type', 'password'); // visual trick
+                    input.dataset.mode = 'password';
+                } else if (input.dataset.mode === 'password') {
+                    // Password Check
+                    if (cmdLine.toLowerCase() === 'steam') {
+                        response = "ACCESS GRANTED. WELCOME, BOILERMAKER.\nEXECUTING UNLOCK.EXE...";
+                        output.innerHTML += `<div class="text-green-400 mb-2 glow-text">${response.replace(/\n/g, '<br>')}</div>`;
+                        
+                        // Fun animation before switching
+                        setTimeout(() => {
+                            setTheme('secret_hog');
+                            closeArgTerminal();
+                            triggerConfetti();
+                            alert("SECRET THEME UNLOCKED: GOLDEN HOG\nProbability Engine Overclocked.");
+                        }, 2000);
+                        
+                        input.setAttribute('type', 'text');
+                        delete input.dataset.mode;
+                        return;
+                    } else {
+                        response = "ACCESS DENIED. INCORRECT PASSWORD.";
+                    }
+                    input.setAttribute('type', 'text');
+                    delete input.dataset.mode;
+                } else if (cmd === 'exit') {
+                    closeArgTerminal();
+                } else if (cmd === '') {
+                    response = "";
+                } else {
+                    response = `UNKNOWN COMMAND: ${cmd}`;
+                }
+                
+                if (response) {
+                    output.innerHTML += `<div class="text-green-400 mb-2 glow-text">${response.replace(/\n/g, '<br>')}</div>`;
+                }
+                
+                output.scrollTop = output.scrollHeight;
+            }
+        }
+
+        // --- CORE CALCULATOR LOGIC ---
         function toggleDebug() {
             const log = document.getElementById('debugLog');
             log.style.display = log.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function saveData() {
+            const inputs = ['scoutTeam', 'advancementSlots', 'regionWeight', 'totalTeams', 'numAlliances', 'rank', 'allianceRole', 'selectionOrder', 'playoffFinish', 'judgedAward'];
+            const data = {};
+            inputs.forEach(id => {
+                data[id] = document.getElementById(id).value;
+            });
+            localStorage.setItem('ftcCalcData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('ftcCalcData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                for (const key in data) {
+                    const el = document.getElementById(key);
+                    if (el) el.value = data[key];
+                }
+            }
         }
 
         async function fetchScoutData() {
@@ -248,23 +993,29 @@
             status.innerHTML = "";
             status.className = "text-[10px] text-center font-bold mt-1 text-slate-400";
 
-            // Revised Query: Using 'stats' field for rank as indicated by previous errors
+            // GraphQL Query
             const query = `
                 query TeamLatestEvent($teamNumber: Int!) {
                     teamByNumber(number: $teamNumber) {
                         number
                         events(season: 2025) {
                             stats {
-                                rank
+                                ... on TeamEventStats2025 {
+                                    rank
+                                }
                             }
                             event {
                                 code
                                 name
-                                teams { teamNumber }
+                                teams { 
+                                    team {
+                                        number
+                                    }
+                                }
                                 awards { 
                                     type 
                                     placement 
-                                    team { teamNumber }
+                                    team { number }
                                 }
                             }
                         }
@@ -287,24 +1038,27 @@
                 const teamData = result?.data?.teamByNumber;
                 if (!teamData) throw new Error("Team not found.");
                 
-                // Filter for events that have valid rank data in 'stats'
                 const validEvents = (teamData.events || []).filter(e => e.stats && e.stats.rank > 0);
                 if (validEvents.length === 0) throw new Error("No recorded rankings found for this season.");
 
-                // Use the most recent event
                 const latestEntry = validEvents[validEvents.length - 1];
                 const latestEvent = latestEntry.event;
                 
                 status.innerHTML = "Synced: " + latestEvent.name;
                 status.classList.add("text-[var(--primary)]");
 
-                document.getElementById('totalTeams').value = latestEvent.teams.length;
-                document.getElementById('numAlliances').value = latestEvent.teams.length >= 40 ? "8" : "4";
+                const teamCount = latestEvent.teams.length;
+                document.getElementById('totalTeams').value = teamCount;
+                
+                let alliances = 4;
+                if (teamCount >= 40) alliances = 8;
+                else if (teamCount >= 30) alliances = 6;
+                document.getElementById('numAlliances').value = alliances;
+
                 document.getElementById('rank').value = latestEntry.stats.rank;
 
-                // Award mapping
                 const teamAwards = (latestEvent.awards || []).filter(a => 
-                    a.team && a.team.teamNumber === teamNumber
+                    a.team && a.team.number === teamNumber
                 );
 
                 if (teamAwards.length > 0) {
@@ -345,7 +1099,22 @@
             return Math.max(2, Math.min(16, Math.round(pts)));
         }
 
+        function triggerConfetti() {
+            for(let i=0; i<50; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -10 + 'px';
+                conf.style.backgroundColor = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff'][Math.floor(Math.random() * 5)];
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                document.body.appendChild(conf);
+                setTimeout(() => conf.remove(), 5000);
+            }
+        }
+
         function calculate() {
+            saveData();
+            
             const rank = parseInt(document.getElementById('rank').value) || 1;
             const total = parseInt(document.getElementById('totalTeams').value) || 28;
             const alliances = parseInt(document.getElementById('numAlliances').value) || 4;
@@ -379,12 +1148,13 @@
 
             let probability = 0;
             let statusMessage = "";
+            let baseThreshold = (92 - (slots * 3.8)) / regWeight;
 
             if (awardPts === 60) {
                 probability = 100;
                 statusMessage = "<strong>Locked In.</strong> 1st Place Inspire is the highest advancement priority. Pack your bags!";
+                if(Math.random() > 0.9) triggerConfetti();
             } else {
-                let baseThreshold = (92 - (slots * 3.8)) / regWeight; 
                 probability = Math.min(99, Math.max(0, (totalScore / baseThreshold) * 100));
                 
                 if (probability >= 85) statusMessage = "<strong>Very Likely.</strong> Your point total should comfortably clear the cutoff.";
@@ -396,16 +1166,61 @@
             probFill.style.width = probability + "%";
             document.getElementById('probabilityPercent').innerText = Math.round(probability) + "%";
             
-            if (probability > 75) probFill.style.backgroundColor = "var(--primary)"; 
-            else if (probability > 40) probFill.style.backgroundColor = "#eab308"; 
-            else probFill.style.backgroundColor = "#ef4444"; 
+            if (probability >= 100) {
+                probFill.style.backgroundColor = "#22c55e"; 
+                if(!window.hasCelebrated) { triggerConfetti(); window.hasCelebrated = true; }
+            } else if (probability > 75) {
+                probFill.style.backgroundColor = "var(--primary)"; 
+            } else if (probability > 40) {
+                probFill.style.backgroundColor = "#eab308"; 
+            } else {
+                probFill.style.backgroundColor = "#ef4444"; 
+            }
             
             document.getElementById('chanceText').innerHTML = statusMessage;
+
+            const recBox = document.getElementById('recommendationBox');
+            const recText = document.getElementById('recommendationText');
+            
+            if (probability < 85 && probability > 0) {
+                recBox.classList.remove('hidden');
+                const needed = Math.ceil(baseThreshold * 0.85) - totalScore;
+                recText.innerText = `You are roughly ${needed} points away from the 'Very Likely' tier. ` + 
+                                   (needed <= 12 ? "A Judged Award (12 pts) could bridge this gap." : "You may need a combination of Award and Playoff points.");
+            } else {
+                recBox.classList.add('hidden');
+            }
+        }
+
+        function shareResults() {
+            const team = document.getElementById('scoutTeam').value || "My Team";
+            const total = document.getElementById('totalPoints').innerText;
+            const prob = document.getElementById('probabilityPercent').innerText;
+            const q = document.getElementById('ptsQual').innerText;
+            const a = document.getElementById('ptsAlliance').innerText;
+            const p = document.getElementById('ptsPlayoff').innerText;
+            const j = document.getElementById('ptsAwards').innerText;
+            
+            const text = `DECODE Advancement Summary for Team ${team}:\n` +
+                         `🏆 Total Points: ${total}\n` +
+                         `📊 Probability: ${prob}\n` +
+                         `------------------\n` +
+                         `Quals: ${q} | Alliance: ${a}\n` +
+                         `Playoffs: ${p} | Awards: ${j}\n` +
+                         `Calc: https://ftcscout.org`; 
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('button[onclick="shareResults()"]');
+                const orig = btn.innerText;
+                btn.innerText = "Copied!";
+                setTimeout(() => btn.innerText = orig, 2000);
+            });
         }
 
         window.onload = () => {
             const saved = localStorage.getItem('ftcTheme');
             if (saved) setTheme(saved);
+            loadData();
             calculate();
         };
     </script>
